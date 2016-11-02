@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaker Mode | Hyperlinks in WebVR</title>
+    <style>
+      body {
+        background: #444;
+      }
+
+      iframe {
+        border: 0;
+      }
+
+      .main {
+        height: 100vh;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 70vw;
+      }
+
+      .next {
+        border: 1px solid #000;
+        height: 30vh;
+        pointer-events: none;
+        position: absolute;
+        right: 1vw;
+        top: 5vw;
+        width: 28vw;
+      }
+
+      .controls {
+        position: absolute;
+        right: 1vw;
+        top: 50vh;
+        width: 28vw;
+      }
+
+      .controls button {
+        font-size: 2em;
+        font-weight: bold;
+        font: inherit;
+        line-height: 2em;
+        width: 40%;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe class="main" src="./"></iframe>
+    <iframe class="next" src="./"></iframe>
+    <div class="controls">
+      <button class="go-prev">&lt;</button>
+      <button class="go-next">&gt;</button>
+    </div>
+    <script>
+      (function () {
+        var main = document.querySelector('.main');
+        var next = document.querySelector('.next');
+
+        var b_prev = document.querySelector('.go-prev');
+        var b_next = document.querySelector('.go-next');
+
+        b_next.addEventListener('click', function () {
+          main.contentWindow.postMessage({
+            type: 'next'
+          }, '*');
+        });
+
+        b_prev.addEventListener('click', function () {
+          main.contentWindow.postMessage({
+            type: 'prev'
+          }, '*');
+        });
+
+        window.addEventListener('message', function (e) {
+          var msg = e.data;
+          if (msg.type === 'goto') {
+            next.contentWindow.postMessage({
+              type: 'goto',
+              num: msg.num + 1
+            }, '*');
+          }
+          console.log(e.data);
+        });
+
+        main.contentWindow.focus();
+      })();
+    </script>
+  </body>
+</html>
